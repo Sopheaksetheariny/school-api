@@ -4,6 +4,8 @@ import studentRoutes from './routes/student.routes.js';
 import courseRoutes from './routes/course.routes.js';
 import teacherRoutes from './routes/teacher.routes.js';
 import { serveSwagger, setupSwagger } from './config/swagger.js';
+import authRoutes from './routes/auth.routes.mjs';
+import authenticateJWT from './middleware/auth.middleware.mjs';
 
 dotenv.config();
 const app = express();
@@ -13,9 +15,12 @@ app.use(express.json());
 
 app.use('/docs', serveSwagger, setupSwagger);
 
-app.use('/students', studentRoutes);
-app.use('/courses', courseRoutes);
-app.use('/teachers', teacherRoutes);
+app.use('/register', authRoutes);
+app.use('/login', authRoutes);
+
+app.use('/students', authenticateJWT, studentRoutes);
+app.use('/courses', authenticateJWT, courseRoutes);
+app.use('/teachers', authenticateJWT, teacherRoutes);
 
 app.get('/', (req, res) => res.send('Welcome to School API!'));
 
